@@ -7,10 +7,10 @@ class App(object):
     def __init__(self, delay: float) -> None:
         self._delay = delay
 
-        self._rows = 15
-        self._cols = 15
-        self._cellheight = 30
-        self._cellwidth = 30
+        self._rows = 127
+        self._cols = 127
+        self._cellheight = 5
+        self._cellwidth = 5
 
         self._running = True
         self._display_surf = None
@@ -30,8 +30,8 @@ class App(object):
         max_steps = 1
         loop_count = 0
         max_loops = 2
-        x = 7
-        y = 7
+        x = self._rows//2
+        y = self._cols//2
         dir_x = +1
         dir_y = 0
         for i in range(0, self._cols * self._rows):
@@ -42,7 +42,7 @@ class App(object):
             if p:
                 self._grid[index] = i+1
             else:
-                self._grid[index] = ''
+                self._grid[index] = None
             x += dir_x
             y += dir_y
             step_count += 1
@@ -70,7 +70,13 @@ class App(object):
                     max_steps += 1
     def is_prime(self, num):
         # slow prime calc
-        for i in range(2, num):
+        if num == 1:
+            return False
+        if num == 2:
+            return True
+        if num % 2 == 0:
+            return False
+        for i in range(3, num, 2):
             if num % i == 0:
                 return False
         return True
@@ -104,9 +110,12 @@ class App(object):
         self._display_surf.fill((0,0,0))
         for r in range(0, self._rows):
             for c in range(self._cols):
-                text = str(self._grid[c+(r*self._cols)])
-                img = self.font_s.render(text, True, (255,255,255))
-                self._display_surf.blit(img, (c*self._cellwidth, r*self._cellheight))
+                num = self._grid[c+(r*self._cols)]
+                if num != None:
+                    pygame.draw.rect(self._display_surf, (255,255,255), (c*self._cellwidth, r*self._cellheight, self._cellwidth, self._cellheight), 0)
+                    #text = str(self._grid[c+(r*self._cols)])
+                    #img = self.font_s.render(text, True, (255,255,255))
+                    #self._display_surf.blit(img, (c*self._cellwidth, r*self._cellheight))
         pygame.display.update()
     def on_cleanup(self) -> None:
         pygame.quit()
